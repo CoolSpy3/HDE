@@ -24,6 +24,7 @@ public class DORGate extends DComponent {
     
     /**
      * Represents an DORGate gate logic component
+     * @param pos The top left corner of the component
      */
     public DORGate(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
@@ -31,6 +32,7 @@ public class DORGate extends DComponent {
     
     /**
      * Represents an DORGate gate logic component
+     * @param pos The top left corner of the component
      */
     public DORGate(Point2D.Double pos) {
         super("DORGate", new Dimension(100, 50), pos);

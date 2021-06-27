@@ -123,8 +123,8 @@ public final class Utils {
     /**
      * Rotates the elements of the given maps.
      * This causes the elements of map_1 to move to map_2, those of map_2 to move to map_3, ..., and those of map_n to move to map_1
-     * @param <K> The type of keys maintained by the maps
-     * @param <V> The type of mapped values
+     * @param <T> The type of keys maintained by the maps
+     * @param <U> The type of mapped values
      * @param maps The maps of which to rotate the elements
      */
     @SafeVarargs
