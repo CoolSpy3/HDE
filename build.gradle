@@ -12,3 +12,7 @@ repositories {
 dependencies {
     testImplementation     'junit:junit:4.13'
 }
+
+task javadoc(type: Javadoc) {
+    source = sourceSets.main.allJava
+}

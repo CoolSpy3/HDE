@@ -1,0 +1,19 @@
+name: Check Formatting
+
+on: [pull_request, push]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - uses: actions/checkout@v2
+      with:
+        repository: 'CoolSpy3/blankline-formatter'
+        path: 'blankline-formatter'
+    - run: python3 blankline-formatter/blankline-formatter.py . java
+    - run: git --no-pager diff --exit-code HEAD
