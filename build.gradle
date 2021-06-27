@@ -13,6 +13,6 @@ dependencies {
     testImplementation     'junit:junit:4.13'
 }
 
-task javadoc(type: Javadoc) {
+task buildJavadocs(type: Javadoc) {
     source = sourceSets.main.allJava
 }
