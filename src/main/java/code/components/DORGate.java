@@ -21,7 +21,7 @@ public class DORGate extends DComponent {
             e.printStackTrace(System.err);
         }
     }
-    
+
     /**
      * Represents an DORGate gate logic component
      * @param pos The top left corner of the component
@@ -29,7 +29,7 @@ public class DORGate extends DComponent {
     public DORGate(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
     }
-    
+
     /**
      * Represents an DORGate gate logic component
      * @param pos The top left corner of the component
@@ -40,5 +40,5 @@ public class DORGate extends DComponent {
         linputs.put("I2", 40);
         rinputs.put("O", 24);
     }
-    
+
 }

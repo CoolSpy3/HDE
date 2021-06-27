@@ -21,7 +21,7 @@ public class Junction extends DComponent {
             e.printStackTrace(System.err);
         }
     }
-    
+
     /**
      * Creates a new Junction at the given position
      * @param pos The top left corner of the component
@@ -29,7 +29,7 @@ public class Junction extends DComponent {
     public Junction(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
     }
-    
+
     /**
      * Creates a new Junction at the given position
      * @param pos The top left corner of the component
@@ -41,5 +41,5 @@ public class Junction extends DComponent {
         rinputs.put("P3", 9);
         tinputs.put("P4", 9);
     }
-    
+
 }

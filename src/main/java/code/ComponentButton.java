@@ -10,9 +10,9 @@ import javax.swing.JToggleButton;
  * An instance of {@link JToggleButton} which supports creating a component
  */
 public abstract class ComponentButton extends JToggleButton {
-    
+
     private static final long serialVersionUID = 5839885054615152118L;
-    
+
     /**
      * Creates an initially unselected toggle button
      * without setting the text or image.
@@ -64,7 +64,7 @@ public abstract class ComponentButton extends JToggleButton {
     public static abstract class CenteredComponentButton extends ComponentButton {
 
         private static final long serialVersionUID = -205625619713823577L;
-        
+
         /**
          * The size of the component which will be created by the {@link #getComponent(java.awt.geom.Point2D.Double) } method of this button
          */
@@ -93,7 +93,7 @@ public abstract class ComponentButton extends JToggleButton {
             this.size = size;
         }
 
-        
+
         /**
          * Creates an unselected toggle button with the specified text.
          *
@@ -123,7 +123,7 @@ public abstract class ComponentButton extends JToggleButton {
             // The top left corner of the component will be at the center minus half the component's width and height
             return getUncenteredDComponent(new Point2D.Double(location.x-size.width/2,location.y-size.height/2));
         }
-        
+
         /**
          * Creates a new DComponent at the specified position
          * @param location The top left corner of the new component
@@ -140,7 +140,7 @@ public abstract class ComponentButton extends JToggleButton {
     public static class LambdaComponentButton extends CenteredComponentButton {
 
         private static final long serialVersionUID = 3922329501741839302L;
-        
+
         /**
          * The function which provides the implementation for {@link #getUncenteredDComponent(java.awt.geom.Point2D.Double) }
          */

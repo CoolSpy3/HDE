@@ -73,15 +73,15 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private final Point brdc;
     private final Point mouseDragStart;
     private final Point mousePos;
-    
+
     private int selectedPortCompId;
     private final Point2D.Double selectedPortPos;
     private String selectedPortId;
-    
+
     private boolean lbd;
     private boolean ctrl;
     private boolean shift;
-    
+
     private boolean showLine;
     private final Point2D.Double lineStart;
     private double linePXMov;
@@ -89,10 +89,10 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private int lineStartCompId;
     private String lineStartPortId;
     private final ArrayList<Line> lines;
-    
+
     private final ArrayList<DComponent> clipboardComps;
     private final ArrayList<Line> clipboardLines;
-    
+
     /**
      * Creates a new ContentPanel and initializes it with a blank workspace
      * @param gui The frame which will contain this ContentPanel
@@ -101,13 +101,13 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     public ContentPanel(GUI gui) {
         // Save parent window reference
         this.gui = gui;
-        
+
         // Ensure all component's have registered images
         initComps();
-        
+
         // Create a ComponentSelector
         this.selector = new ComponentSelector(gui, gui);
-        
+
         // Register Listeners
         gui.getContentPane().addContainerListener(this);
         addKeyListener(this);
@@ -115,7 +115,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         setFocusable(true);
-        
+
         // Set variables to default values
         draggedComponents = new ArrayList<>();
         pos = new Point2D.Double();
@@ -141,7 +141,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         clipboardComps = new ArrayList<>();
         clipboardLines = new ArrayList<>();
     }
-    
+
     /**
      * Creates a new ContentPanel and initializes it with the components loaded from the provided file
      * @param gui The frame which will contain this ContentPanel
@@ -152,19 +152,19 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     public ContentPanel(GUI gui, File file) throws IOException {
         // Init the window normally
         this(gui);
-        
+
         try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             // Load the data from the file
             comps.addAll((Collection<? extends DComponent>)ois.readObject());
             lines.addAll((Collection<? extends Line>)ois.readObject());
-            
+
             // Register all of the components and lines
             ResourceManager.forceLoad(comps, lines);
         } catch(ClassNotFoundException e) {
             throw new IOException(e);
         }
     }
-    
+
     /**
      * Converts the given point from the component coordinate system into a position on the frame
      * @param ip The point to convert
@@ -231,7 +231,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private synchronized void setSelectedComponent(DComponent comp) {
         this.selectedComponent = comp;
     }
-    
+
     /**
      * Checks whether the given component collides with the given position in the frame coordinate system
      * @param comp The component to check
@@ -241,7 +241,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     public boolean collidesWithPoint(DComponent comp, Point pos) {
         return toFrameCoords(comp.getBounds()).contains(pos);
     }
-    
+
     /**
      * Adds the given component to the list of components currently selected by the user
      * @param comp The component to add
@@ -300,33 +300,33 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                 g.drawImage(comp.getImage(), tl.x, tl.y, Utils.asInt(comp.size.width*scale), Utils.asInt(comp.size.height*scale), null);
             }
         });
-        
+
         g.setColor(new Color(0, 255, 255, 255));
-        
+
         // Draw selection rectangle
         if(shift && lbd) {
             g.draw(Utils.rectangleFromAnyCorners(mouseDragStart, mousePos));
         } else if(!draggedComponents.isEmpty()) {
             g.draw(Utils.rectangleFromCorners(tldc, brdc));
         }
-        
+
         g.setColor(new Color(0, 255, 0, 255));
-        
+
         // Highlight selected port
         if(selectedPortCompId != -1) {
             Point portPos = toFrameCoords(selectedPortPos);
             g.fillRect(portPos.x, portPos.y, 2, 2);
         }
-        
+
         g.setColor(new Color(0, 0, 0, 255));
-        
+
         g.setStroke(new BasicStroke(2*(int)scale));
-        
+
         // Draw line (if one is being created)
         if(showLine) {
             Utils.drawLine(g, toFrameCoords(lineStart), mousePos, lineStartX, linePXMov);
         }
-        
+
         // Draw lines (if on screen)
         lines.forEach((line) -> {
             if(getBounds().contains(toFrameCoords(ResourceManager.getComponent(line.compId1).getPoint(line.portId1))) || getBounds().contains(toFrameCoords(ResourceManager.getComponent(line.compId2).getPoint(line.portId2)))) {
@@ -358,11 +358,11 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             removeMouseListener(this);
             removeMouseMotionListener(this);
             removeMouseWheelListener(this);
-            
+
             // Remove ComponentSelector
             selector.setVisible(false);
             selector.dispose();
-            
+
             // Clear components and lines
             comps.clear();
             lines.clear();
@@ -375,13 +375,13 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Reset position and scale to defaults
             pos.setLocation(0, 0);
             scale = 2;
-        
+
         // If a single component is selected
         } else if(e.getKeyChar() == 'r' && draggedComponents.size() == 1) {
             // Rotate selected component
             DComponent comp = draggedComponents.get(0);
             comp.rotate();
-            
+
             // Update selection
             tldc.setLocation(toFrameCoords(comp.pos));
             brdc.setLocation(toFrameCoords(comp.pos));
@@ -407,12 +407,12 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                     ResourceManager.freePorts(l);
                     removedLines.add(l);
                 });
-                
+
                 // Delete components
                 lines.removeAll(removedLines);
                 comps.remove(comp);
             });
-            
+
             // Clear the selection
             draggedComponents.clear();
         }
@@ -423,17 +423,17 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Clear the clipboard
             clipboardComps.clear();
             clipboardLines.clear();
-            
+
             if(draggedComponents.isEmpty()) {
                 // Don't try to copy nothing
                 return;
             }
-            
+
             // Add selection to clipboard
             clipboardComps.addAll(draggedComponents);
             clipboardLines.addAll(lines);
             List<Integer> clipboardIds = clipboardComps.stream().map(DComponent::getId).collect(Collectors.toList());
-            
+
             // Remove all lines unless both their endpoints are part of the clipboard
             clipboardLines.removeIf(line -> !clipboardIds.contains(line.compId1) || !clipboardIds.contains(line.compId2));
         }
@@ -441,10 +441,10 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Copy components
             ArrayList<DComponent> newComps = new ArrayList<>();
             ResourceManager.addAsNew(clipboardComps, clipboardLines, fromFrameCoords(mousePos), newComps, lines, this);
-            
+
             // Clear selected components
             draggedComponents.clear();
-            
+
             // Select new components
             newComps.forEach(comp -> addComponentToSelection(comp));
             comps.addAll(newComps);
@@ -470,20 +470,20 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             if(ResourceManager.portStatus(selectedPortCompId, selectedPortId)) {
                 return;
             }
-            
+
             // Clear selected components
             draggedComponents.clear();
-            
+
             // Start drawing a line at the selected position
             lineStart.setLocation(selectedPortPos);
             linePXMov = 0.5;
-            
+
             // Determine whether line will be horizontal or vertical
             DComponent selectedPortComp = ResourceManager.getComponent(selectedPortCompId);
             Point2D.Double selectedPortPosRTComp = new Point2D.Double(selectedPortPos.x, selectedPortPos.y);
             selectedPortPosRTComp.setLocation(selectedPortPosRTComp.x-selectedPortComp.pos.x-1, selectedPortPosRTComp.y-selectedPortComp.pos.y-1);
             lineStartX = selectedPortComp.linputs.containsValue((int)selectedPortPosRTComp.getY()) || selectedPortComp.rinputs.containsValue((int)selectedPortPosRTComp.getY());
-            
+
             // Start drawing the line
             lineStartCompId = selectedPortCompId;
             lineStartPortId = selectedPortId;
@@ -499,45 +499,45 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             }
             return;
         }
-        
+
         // Update left mouse button flag
         lbd = true;
-        
+
         // Store the mouse position in case the user starts dragging the mouse
         mouseDragStart.setLocation(e.getPoint());
-        
+
         // Has the user selected a point within the current selection
         boolean mouseInRect = !draggedComponents.isEmpty() && Utils.rectangleFromCorners(tldc, brdc).contains(e.getPoint());
-        
+
         if(!(ctrl && getSelectedComponent() != null) && !shift && !mouseInRect) {
             // If the user is not editing a selection, clear the selection
             draggedComponents.clear();
         }
-        
+
         // If a line is being drawn
         if(showLine) {
             if(selectedPortCompId == -1 || ResourceManager.portStatus(selectedPortCompId, selectedPortId) || (selectedPortCompId == lineStartCompId && selectedPortId.equals(lineStartPortId))) {
                 // If no port is selected (or that port is in use)
-                
+
                 // Create a Junction at the specified position
-                
+
                 // Get the position of the click in the component coordinate system
                 Point2D.Double ePointNFC = fromFrameCoords(e.getPoint());
-                
+
                 // The line will end in the same horizontal / vertical direction it started in unless the bend occures at l00% of the line's length
                 boolean lineEndX = linePXMov == 1 ? !lineStartX : lineStartX;
-                
+
                 // Create a Junction so that the new port aligns with the mouse position
                 Junction junction = new Junction(new Point2D.Double(
                         lineEndX ? ePointNFC.x - (lineStart.x > ePointNFC.x ? 20 : 0) : ePointNFC.x-9,
                         lineEndX ? ePointNFC.y-9 : ePointNFC.y - (lineStart.y > ePointNFC.y ? 20 : 0)));
                 comps.add(junction);
-                
+
                 // Reserve a newly created port
                 String port = lineEndX ? ePointNFC.x > lineStart.x ? "P2" : "P3" : ePointNFC.y > lineStart.y ? "P4" : "P1";
                 ResourceManager.reservePort(junction, port);
                 ResourceManager.reservePort(lineStartCompId, lineStartPortId);
-                
+
                 // Create the line
                 lines.add(new Line(lineStartCompId, lineStartPortId, junction.getId(), port, lineStartX, linePXMov));
                 showLine = false;
@@ -545,7 +545,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                 // Reserve the selected port
                 ResourceManager.reservePort(selectedPortCompId, selectedPortId);
                 ResourceManager.reservePort(lineStartCompId, lineStartPortId);
-                
+
                 // Create the line
                 lines.add(new Line(lineStartCompId, lineStartPortId, selectedPortCompId, selectedPortId, lineStartX, linePXMov));
                 showLine = false;
@@ -569,7 +569,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         if(e.getButton() == 1) {
             // Update left mouse button flag
             lbd = false;
-            
+
             if(shift) {
                 // If the user was holding shift, create a selection and select all components contained within it
                 Rectangle selection = fromFrameCoords(Utils.rectangleFromAnyCorners(mouseDragStart, e.getPoint()));
@@ -590,18 +590,18 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     public void mouseDragged(MouseEvent e) {
         // If the mouse is dragged, it has also been moved
         mouseMoved(e);
-        
+
         // If the left mouse button is not pressed or the user is holding shift, do nothing
         if(!lbd || shift) {
             return;
         }
-        
+
         // Calculate the distance the mouse moved
         int rdx = e.getX()-mouseDragStart.x;
         int rdy = e.getY()-mouseDragStart.y;
         double dx = rdx/scale;
         double dy = rdy/scale;
-        
+
         if(draggedComponents.isEmpty()) {
             // If no components are selected, drag the whole scene
             pos.setLocation(pos.x+dx, pos.y+dy);
@@ -613,7 +613,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                 comp.pos.setLocation(comp.pos.x + dx, comp.pos.y + dy);
             });
         }
-        
+
         // If the mouse is dragged again, assume it started from it's current position (don't drag components by a distance the mouse has already moved)
         mouseDragStart.setLocation(e.getPoint());
     }
@@ -622,17 +622,17 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     public void mouseMoved(MouseEvent e) {
         // Update the mouse position
         mousePos.setLocation(e.getPoint());
-        
+
         // Update the selected component
         setSelectedComponent(null);
         comps.stream().filter(comp -> (collidesWithPoint(comp, e.getPoint()))).forEachOrdered(comp -> {
             setSelectedComponent(comp);
         });
-        
+
         // Update the selected port
         selectedPortCompId = -1;
         double dist = Integer.MAX_VALUE;
-        
+
         // For every component
         for(DComponent comp : comps) {
             // If it's on screen
@@ -646,7 +646,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                         selectedPortCompId = comp.getId();
                         selectedPortPos.setLocation(point);
                         selectedPortId = point.tag;
-                        
+
                         // And update the distance of the closest known port
                         dist = tDist;
                     }
@@ -660,7 +660,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         if(showLine && ctrl) {
             // If we're drawing a line, update the location where it bends
             linePXMov += e.getUnitsToScroll()*SCROLL_MOV_LINE_PER;
-            
+
             // Cap the result to between 0 and 1
             linePXMov = linePXMov < 0 ? 0 : linePXMov;
             linePXMov = linePXMov > 1 ? 1 : linePXMov;
@@ -668,11 +668,11 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Otherwise, update the scale
             double oldScale = scale;
             scale += e.getUnitsToScroll()*SCROLL_SCALE*-1;
-            
+
             // Cap the result to bettween SCALE_MIN and SCALE_MAX
             scale = scale < SCALE_MIN ? SCALE_MIN : scale;
             scale = scale > SCALE_MAX ? SCALE_MAX : scale;
-            
+
             // If the scale changed and components are being dragged
             if(oldScale != scale && !draggedComponents.isEmpty()) {
                 // Update the selection box to reflect the new positions of the components
@@ -713,7 +713,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             oos.writeObject(lines);
         }
     }
-    
+
     private void initComps() {
         // Attempt to load base component classes
         // This causes their static blocks to be run
@@ -727,7 +727,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         tryInit("code.components.DXORGate");
         tryInit("code.components.DXNORGate");
     }
-    
+
     private void tryInit(String clazz) {
         try {
             // Find the class

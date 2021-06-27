@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 public class TaggedDoublePoint extends Point2D.Double {
 
     private static final long serialVersionUID = 8858277194439943011L;
-    
+
     /**
      * The data associated with this point
      */
@@ -71,5 +71,5 @@ public class TaggedDoublePoint extends Point2D.Double {
         super(x, y);
         this.tag = tag;
     }
-    
+
 }

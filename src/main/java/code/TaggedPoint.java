@@ -9,7 +9,7 @@ import java.awt.Point;
 public class TaggedPoint extends Point {
 
     private static final long serialVersionUID = 8858277194439943011L;
-    
+
     /**
      * The data associated with this point
      */
@@ -71,5 +71,5 @@ public class TaggedPoint extends Point {
         super(x, y);
         this.tag = tag;
     }
-    
+
 }

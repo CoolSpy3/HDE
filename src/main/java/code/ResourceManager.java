@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
  * Manages the allocation of component and port ids as well as component images
  */
 public final class ResourceManager {
-    
+
     private static final Cleaner cleaner = Cleaner.create();
     private static final HashMap<String, BufferedImage> images = new HashMap<>();
     private static final HashMap<Integer, WeakReference<DComponent>> compids = new HashMap<>();
@@ -29,7 +29,7 @@ public final class ResourceManager {
     private static final ReentrantReadWriteLock compidLock = new ReentrantReadWriteLock();
     private static final ReentrantReadWriteLock portLock = new ReentrantReadWriteLock();
     private static Object stateKey = new Object();
-    
+
     /**
      * Loads the image from the given file and stores it with the given alias
      * @param name The alias of the image
@@ -42,7 +42,7 @@ public final class ResourceManager {
     public static void loadImage(String name, String path) throws IOException {
         images.put(name, ImageIO.read(new File(path)));
     }
-    
+
     /**
      * Loads the image from the given file and stores it with the given alias as well as creating 4 other images which correspond to the original image rotated by a multiple of 90 degrees.
      * This creates 5 new image entries with the following names:
@@ -60,7 +60,7 @@ public final class ResourceManager {
      */
     public static void loadImages(String name, String path) throws IOException {
         BufferedImage img = ImageIO.read(new File(path));
-        
+
         images.put(name, img);
         images.put(name + "0", img);
         img = Utils.rotateClockwise90(img);
@@ -70,7 +70,7 @@ public final class ResourceManager {
         img = Utils.rotateClockwise90(img);
         images.put(name + "270", img);
     }
-    
+
     /**
      * Maps the given alias to reference the given image
      * @param name The alias of the image
@@ -82,7 +82,7 @@ public final class ResourceManager {
     public static void putImage(String name, BufferedImage img) {
         images.put(name, img);
     }
-    
+
     /**
      * Retrieves the image which corresponds to the given alias
      * @param name The alias of the image to search for
@@ -94,7 +94,7 @@ public final class ResourceManager {
     public static BufferedImage getImage(String name) {
         return images.get(name);
     }
-    
+
     /**
      * Creates a copy of the given components and Lines and centers them at the specified position. This method only copies Lines which exist between copied components
      * @param iComps The components to copy
@@ -109,10 +109,10 @@ public final class ResourceManager {
             // If there are no input components, nothing needs to be done
             return;
         }
-        
+
         // Copy all componets and save their original id
         Map<DComponent, Integer> newComps = iComps.stream().collect(Collectors.toMap(DComponent::safeCopy, DComponent::getId));
-        
+
         if(Utils.checkErrors() != null) {
             // If an error occured, warn the user and do nothing
             // The copied components will be garbage-collected
@@ -120,7 +120,7 @@ public final class ResourceManager {
             JOptionPane.showMessageDialog(parent, "An error occured importing the selected components", "Import Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         // Move the new components to the center point
         {
             // Calculate the bounding box containing the components
@@ -147,7 +147,7 @@ public final class ResourceManager {
                     brc.setLocation(brc.x, compPos.y);
                 }
             }
-            
+
             // new_top_left_corner = newCenter - bounds / 2
             // new_pos = old_pos - original_top_left_corner + new_top_left_corner = old_pos - original_top_left_corner + newCenter - bounds / 2
             double width = brc.x - tlc.x;
@@ -156,25 +156,25 @@ public final class ResourceManager {
             newCenter.setLocation(newCenter.x-tlc.x, newCenter.y-tlc.y);
             newComps.keySet().forEach(comp -> comp.pos.setLocation(comp.pos.x+newCenter.x, comp.pos.y+newCenter.y));
         }
-        
+
         // Map old ids to new ids
         Map<Integer, Integer> idMap = newComps.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, e -> e.getKey().getId()));
-        
+
         // Ignore any lines which did not have both of their components copied
         iLines.removeIf(line -> !idMap.keySet().contains(line.compId1) || !idMap.keySet().contains(line.compId2));
-        
+
         // Copy the lines and remap their component ids
         List<Line> newLines = iLines.stream().map(line -> new Line(idMap.get(line.compId1),
                 line.portId1, idMap.get(line.compId2), line.portId2, line.isHoris, line.movPer)).collect(Collectors.toList());
-        
+
         // Reserve ports
         newLines.forEach(ResourceManager::reservePorts);
-        
+
         // Save the copied components and lines
         outComps.addAll(newComps.keySet());
         outLines.addAll(newLines);
     }
-    
+
     /**
      * Deletes any existing components and Lines and registers the given components and Lines
      * @param comps The new components to register
@@ -188,17 +188,17 @@ public final class ResourceManager {
             try {
                 // Update the state key so that old components being cleared won't affect the new component lists
                 stateKey = new Object();
-                
+
                 // Clear the currently loaded components and ports
                 compids.clear();
                 ports.clear();
-                
+
                 // Add the new components
                 comps.forEach(comp -> compids.put(comp.getId(), new WeakReference<>(comp)));
-                
+
                 // Reserve ports
                 lines.forEach(ResourceManager::reservePorts);
-                
+
                 // Unlock locks
             } finally {
                 portLock.writeLock().unlock();
@@ -207,7 +207,7 @@ public final class ResourceManager {
             compidLock.writeLock().unlock();
         }
     }
-    
+
     /**
      * Allocates a unique id for the given component
      * @param comp The component for which an id should be allocated
@@ -224,24 +224,24 @@ public final class ResourceManager {
                 if(!compids.containsKey(i)) {
                     // Map the component to id <i>
                     compids.put(i, new WeakReference<>(comp));
-                    
+
                     // Register a DeallocIdRunner to check for when the component is garbage-collected
                     cleaner.register(comp, new DeallocIdRunner(i, stateKey));
-                    
+
                     // Return the id
                     return i;
                 }
             }
-            
+
             // All valid 2^31 ids are in use, throw an error
             throw new IndexOutOfBoundsException("No valid id found");
-            
+
             // Unlock locks
         } finally {
             compidLock.writeLock().unlock();
         }
     }
-    
+
     /**
      * Retrieves the component with the specified id
      * @param id The id for which to search
@@ -254,13 +254,13 @@ public final class ResourceManager {
         try {
             // Find the component
             return compids.containsKey(id) ? compids.get(id).get() : null;
-            
+
             // Unlock locks
         } finally {
             compidLock.readLock().unlock();
         }
     }
-    
+
     /**
      * Attempts to reserve all of the ports used by the specified Line
      * @param line The Line which should have its ports reserved
@@ -277,7 +277,7 @@ public final class ResourceManager {
         reservePort(line.compId1, line.portId1);
         reservePort(line.compId2, line.portId2);
     }
-    
+
     /**
      * Attempts to reserve the given port
      * @param comp The component on which the port is located
@@ -294,7 +294,7 @@ public final class ResourceManager {
     public static void reservePort(DComponent comp, String port) throws IllegalArgumentException {
         reservePort(comp.getId(), port);
     }
-    
+
     /**
      * Attempts to reserve the given port
      * @param comp The id of the component on which the port is located
@@ -321,16 +321,16 @@ public final class ResourceManager {
                 // There is not an ArrayList for tracking the ports on this component. Create one
                 ports.put(comp, new ArrayList<>());
             }
-            
+
             // Reserve the port
             ports.get(comp).add(port);
-            
+
             // Unlock locks
         } finally {
             portLock.writeLock().unlock();
         }
     }
-    
+
     /**
      * Attempts to free the ports used by the given Line
      * @param line The Line which should have its ports freed
@@ -346,7 +346,7 @@ public final class ResourceManager {
         freePort(line.compId1, line.portId1);
         freePort(line.compId2, line.portId2);
     }
-    
+
     /**
      * Attempts to free the specified port
      * @param comp The component on which the port is located
@@ -362,7 +362,7 @@ public final class ResourceManager {
     public static void freePort(DComponent comp, String port) {
         freePort(comp.getId(), port);
     }
-    
+
     /**
      * Attempts to free the specified port
      * @param comp The id of the component on which the port is located
@@ -383,13 +383,13 @@ public final class ResourceManager {
                 // If there is an ArrayList tracking the ports on this component, attempt to free the requested port
                 ports.get(comp).remove(port);
             }
-            
+
             // Unlock locks
         } finally {
             portLock.writeLock().unlock();
         }
     }
-    
+
     /**
      * Checks whether the given port is reserved
      * @param comp The component on which the port is located
@@ -406,7 +406,7 @@ public final class ResourceManager {
     public static boolean portStatus(DComponent comp, String port) {
         return portStatus(comp.getId(), port);
     }
-    
+
     /**
      * Checks whether the given port is reserved
      * @param comp The id of the component on which the port is located
@@ -428,34 +428,34 @@ public final class ResourceManager {
                 // If there is an ArrayList tracking the ports on this component, check the requested port
                 return ports.get(comp).contains(port);
             }
-            
+
             // No ports on this component have ever reserved. Return false
             return false;
-            
+
             // Unlock locks
         } finally {
             portLock.readLock().unlock();
         }
     }
-    
+
     private static void doDeallocId(int id, Object stateKey) {
         if(stateKey != ResourceManager.stateKey) {
             // The stateKey has changed. The requested component has already been freed
             return;
         }
-        
+
         // Lock the component lock
         compidLock.writeLock().lock();
         try {
             // Remove the component
             compids.remove(id);
-            
+
             // Lock the port lock
             portLock.writeLock().lock();
             try {
                 // Remove the ArrayList which is tracking ports for this component if it exists
                 ports.remove(id);
-                
+
                 // Unlock locks
             } finally {
                 portLock.writeLock().unlock();
@@ -464,7 +464,7 @@ public final class ResourceManager {
             compidLock.writeLock().unlock();
         }
     }
-    
+
     private static class DeallocIdRunner implements Runnable {
         private final int id;
         private final Object stateKey;
@@ -481,5 +481,5 @@ public final class ResourceManager {
 
     private ResourceManager() {
     }
-    
+
 }

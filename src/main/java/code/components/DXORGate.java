@@ -21,7 +21,7 @@ public class DXORGate extends DComponent {
             e.printStackTrace(System.err);
         }
     }
-    
+
     /**
      * Creates a new DXORGate at the given position
      * @param pos The top left corner of the component
@@ -29,7 +29,7 @@ public class DXORGate extends DComponent {
     public DXORGate(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
     }
-    
+
     /**
      * Creates a new DXORGate at the given position
      * @param pos The top left corner of the component
@@ -40,5 +40,5 @@ public class DXORGate extends DComponent {
         linputs.put("I2", 40);
         rinputs.put("O", 24);
     }
-    
+
 }

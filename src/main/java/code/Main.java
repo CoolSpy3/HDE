@@ -15,5 +15,5 @@ public class Main {
         // Create a new GUI
         SwingUtilities.invokeLater(GUI::new);
     }
-    
+
 }

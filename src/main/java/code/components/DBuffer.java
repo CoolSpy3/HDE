@@ -21,7 +21,7 @@ public class DBuffer extends DComponent {
             e.printStackTrace(System.err);
         }
     }
-    
+
     /**
      * Creates a new DBuffer at the given position
      * @param pos The top left corner of the buffer
@@ -29,7 +29,7 @@ public class DBuffer extends DComponent {
     public DBuffer(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
     }
-    
+
     /**
      * Creates a new DBuffer at the given position
      * @param pos The top left corner of the buffer
@@ -39,5 +39,5 @@ public class DBuffer extends DComponent {
         linputs.put("I", 24);
         rinputs.put("O", 24);
     }
-    
+
 }

@@ -26,7 +26,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GUI extends JFrame implements ActionListener, WindowListener {
 
     private static final long serialVersionUID = -131881419240091231L;
-    
+
     /**
      * The refresh rate of the frame in frames per second
      */
@@ -35,7 +35,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
      * The delay between paint updates of the frame. This is equal to a value of <code>1000/FPS</code>
      */
     public static final int FDELAY = 1000/FPS;
-    
+
     private JMenuBar menuBar;
     private JMenu fileMenu;
     private JMenuItem newMenuItem;
@@ -48,9 +48,9 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
     private JMenu optionsMenu;
     private JCheckBoxMenuItem showGridMenuItem;
     private String filename;
-    
+
     private ContentPanel contentPanel;
-    
+
     /**
      * Creates a new GUI and initializes it with the default layout and a thread which repaints the frame every <code>FDELAY</code> milliseconds.
      */
@@ -61,18 +61,18 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         setSize(1000, 1000);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
-        
+
         // Add listeners and components
         addWindowListener(this);
         setupMenus();
-        
+
         // Set default vars
         filename = null;
         contentPanel = null;
-        
+
         // Make window visible
         setVisible(true);
-        
+
         // Start render thread
         @SuppressWarnings("SleepWhileInLoop")
         Thread t = new Thread(() -> {
@@ -88,7 +88,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         t.setDaemon(true);
         t.start();
     }
-    
+
     private void setupMenus() {
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
@@ -131,7 +131,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         menuBar.add(optionsMenu);
         setJMenuBar(menuBar);
     }
-    
+
     /**
      * Checks the user's selection to see whether a grid should be shown behind displayed components
      * @return Whether a grid should be shown behind components
@@ -139,7 +139,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
     public boolean shouldShowGrid() {
         return showGridMenuItem.isSelected();
     }
-    
+
     /**
      * Attempts to close the current content panel.
      * The user will be prompted to save any unsaved data. The panel will then be closed and removed from the frame unless the operation was canceled by the user.
@@ -153,12 +153,12 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 // Remove content panel
                 remove(contentPanel);
                 contentPanel = null;
-                
+
                 // Disable saving
                 saveMenuItem.setEnabled(false);
                 saveAsMenuItem.setEnabled(false);
                 renderMenuItem.setEnabled(false);
-                
+
                 // Revalidate frame
                 revalidate();
             } else {
@@ -167,7 +167,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         }
         return true;
     }
-    
+
     /**
      * Prompts the user to save any unsaved data
      * @return Whether the data was successfully saved
@@ -190,7 +190,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 return false;
         }
     }
-    
+
     /**
      * Saves any unsaved data to the file it was read from or prompts the user for a file location if none was specified
      * @return Whether the data was successfully saved
@@ -208,7 +208,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
             return saveAs();
         }
     }
-    
+
     /**
      * Prompts the user for a location and then saves any unsaved data to that location
      * @return Whether the data was successfully saved
@@ -219,7 +219,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
             // There is no data to save
             return true;
         }
-        
+
         // Prompt user for file
         JFileChooser fc = new JFileChooser();
         fc.setAcceptAllFileFilterUsed(false);
@@ -228,14 +228,14 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         fc.setMultiSelectionEnabled(false);
         fc.showSaveDialog(this);
         File file = fc.getSelectedFile();
-        
+
         if(file == null) {
             // User did not select a file
             return false;
         }
         return saveAs(file);
     }
-    
+
     /**
      * Saves any unsaved data to the specified file
      * @param filename The name of the file to which the data should be saved
@@ -245,7 +245,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
     public boolean saveAs(String filename) throws IOException {
         return saveAs(new File(filename));
     }
-    
+
     /**
      * Saves any unsaved data to the specified file
      * @param file The file to which the data should be saved
@@ -267,16 +267,16 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
             // The file does not exist. Create it
             file.createNewFile();
         }
-        
+
         // Save the file name
         filename = file.getCanonicalPath();
-        
+
         // Write data to file
         contentPanel.save(file);
-        
+
         return true;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -285,16 +285,16 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 if(closeContentPanel()) {
                     // No file is associates with the new project
                     filename = null;
-                    
+
                     // Create a new editor
                     contentPanel = new ContentPanel(this);
                     add(contentPanel);
-                    
+
                     // Enable saving
                     saveMenuItem.setEnabled(true);
                     saveAsMenuItem.setEnabled(true);
                     renderMenuItem.setEnabled(true);
-                    
+
                     // Revalidate frame
                     revalidate();
                 }
@@ -307,21 +307,21 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 fc.setMultiSelectionEnabled(false);
                 fc.showOpenDialog(this);
                 File file = fc.getSelectedFile();
-                
+
                 // If the file is not null, check if it exists. If it does, attempt to close the open project
                 if(file != null && file.exists() && closeContentPanel()) {
                     // Store the file name
                     filename = file.getCanonicalPath();
-                    
+
                     // Create a new editor
                     contentPanel = new ContentPanel(this, file);
                     add(contentPanel);
-                    
+
                     // Enable saving
                     saveMenuItem.setEnabled(true);
                     saveAsMenuItem.setEnabled(true);
                     renderMenuItem.setEnabled(true);
-                    
+
                     // Revalidate frame
                     revalidate();
                 }
@@ -379,5 +379,5 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
     @Override
     public void windowDeactivated(WindowEvent e) {
     }
-    
+
 }

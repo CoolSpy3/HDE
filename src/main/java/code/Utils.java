@@ -15,7 +15,7 @@ import java.util.Map;
  * Contains utility functions
  */
 public final class Utils {
-    
+
     private static final ThreadLocal<ArrayDeque<Throwable>> errors = ThreadLocal.withInitial(ArrayDeque::new);
 
     /**
@@ -44,7 +44,7 @@ public final class Utils {
     public static Point2D.Double asDouble(Point d) {
         return new Point2D.Double(d.x, d.y);
     }
-    
+
     /**
      * Check the error queue to see if any errors have been logged
      * @return The most recent error or <code>null</code> if none have occurred
@@ -54,7 +54,7 @@ public final class Utils {
     public static Throwable checkErrors() {
         return errors.get().poll();
     }
-    
+
     /**
      * Clears the error queue
      * @see #checkErrors() 
@@ -63,7 +63,7 @@ public final class Utils {
     public static void clearErrors() {
         errors.get().clear();
     }
-    
+
     /**
      * Draws the Line defined by the given parameters
      * @param g The Graphics context onto which to draw
@@ -75,7 +75,7 @@ public final class Utils {
     public static void drawLine(Graphics g, Point p1, Point p2, boolean isHoris, double movPer) {
         drawLine(g, p1.x, p1.y, p2.x, p2.y, isHoris, movPer);
     }
-    
+
     /**
      * Draws the Line defined by the given parameters
      * @param g The Graphics context onto which to draw
@@ -99,7 +99,7 @@ public final class Utils {
             g.drawLine(x2, (int)(y1+lineLength), x2, y2);
         }
     }
-    
+
     /**
      * Constructs a rectangle from its top left and bottom right corners
      * @param topLeft The top left corner of the rectangle
@@ -109,7 +109,7 @@ public final class Utils {
     public static Rectangle rectangleFromCorners(Point topLeft, Point bottomRight) {
         return new Rectangle(topLeft, new Dimension(bottomRight.x-topLeft.x, bottomRight.y-topLeft.y));
     }
-    
+
     /**
      * Constructs a rectangle from two of its opposite corners
      * @param c1 One corner of the rectangle
@@ -119,7 +119,7 @@ public final class Utils {
     public static Rectangle rectangleFromAnyCorners(Point c1, Point c2) {
         return rectangleFromCorners(new Point(Math.min(c1.x, c2.x), Math.min(c1.y, c2.y)), new Point(Math.max(c1.x, c2.x), Math.max(c1.y, c2.y)));
     }
-    
+
     /**
      * Rotates the elements of the given maps.
      * This causes the elements of map_1 to move to map_2, those of map_2 to move to map_3, ..., and those of map_n to move to map_1
@@ -144,7 +144,7 @@ public final class Utils {
         }
         maps[0].putAll(buf1);
     }
-    
+
     //Source: https://stackoverflow.com/questions/20959796/rotate-90-degree-to-right-image-in-java
     /**
      * Rotates the given image 90 degrees clockwise
@@ -164,7 +164,7 @@ public final class Utils {
 
         return dest;
     }
-    
+
     /**
      * Adds the given error to the error queue
      * @param t The error to add
@@ -176,7 +176,7 @@ public final class Utils {
             errors.get().addFirst(t);
         }
     }
-    
+
     private Utils() {}
-    
+
 }

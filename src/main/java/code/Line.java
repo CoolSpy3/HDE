@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class Line implements Serializable {
 
     private static final long serialVersionUID = 1800996128086140283L;
-    
+
     /**
      * The id of the first component to which this Line is connected
      */
@@ -51,5 +51,5 @@ public class Line implements Serializable {
         this.isHoris = isHoris;
         this.movPer = movPer;
     }
-    
+
 }
