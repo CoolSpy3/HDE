@@ -1,4 +1,4 @@
-name: Build with Gradle
+name: Build Documentation
 
 on: [pull_request, push]
 
