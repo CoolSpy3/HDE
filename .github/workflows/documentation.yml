@@ -14,4 +14,5 @@ jobs:
     - run: chmod +x gradlew
     - run: ./gradlew javadoc
     - uses: actions/upload-artifact@v2
-      path: build/docs/javadoc
+      with:
+        path: build/docs/javadoc

@@ -14,4 +14,5 @@ jobs:
     - run: chmod +x gradlew
     - run: ./gradlew build
     - uses: actions/upload-artifact@v2
-      path: build/libs/HDE.jar
+      with:
+        path: build/libs/HDE.jar
