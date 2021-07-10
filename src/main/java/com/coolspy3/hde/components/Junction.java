@@ -1,7 +1,7 @@
-package code.components;
+package com.coolspy3.hde.components;
 
-import code.DComponent;
-import code.ResourceManager;
+import com.coolspy3.hde.DComponent;
+import com.coolspy3.hde.ResourceManager;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;

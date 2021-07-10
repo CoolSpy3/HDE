@@ -3,7 +3,9 @@ apply plugin: 'jacoco'
 apply plugin: 'application'
 
 
-mainClassName = 'code.Main'
+mainClassName = 'com.coolspy3.hde.Main'
+
+group 'com.coolspy3'
 
 repositories {
     jcenter()

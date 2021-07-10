@@ -1,14 +1,14 @@
-package code;
+package com.coolspy3.hde;
 
-import code.components.DBuffer;
-import code.components.DANDGate;
-import code.components.DNANDGate;
-import code.components.DNORGate;
-import code.components.DNOTGate;
-import code.components.DORGate;
-import code.components.DXNORGate;
-import code.components.DXORGate;
-import code.components.Junction;
+import com.coolspy3.hde.components.DBuffer;
+import com.coolspy3.hde.components.DANDGate;
+import com.coolspy3.hde.components.DNANDGate;
+import com.coolspy3.hde.components.DNORGate;
+import com.coolspy3.hde.components.DNOTGate;
+import com.coolspy3.hde.components.DORGate;
+import com.coolspy3.hde.components.DXNORGate;
+import com.coolspy3.hde.components.DXORGate;
+import com.coolspy3.hde.components.Junction;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Window;

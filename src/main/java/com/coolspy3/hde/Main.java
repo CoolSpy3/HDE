@@ -1,4 +1,4 @@
-package code;
+package com.coolspy3.hde;
 
 import javax.swing.SwingUtilities;
 

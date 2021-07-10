@@ -1,6 +1,6 @@
-package code;
+package com.coolspy3.hde;
 
-import code.components.Junction;
+import com.coolspy3.hde.components.Junction;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
