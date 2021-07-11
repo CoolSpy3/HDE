@@ -24,8 +24,8 @@ public final class ResourceManager {
 
     private static final Cleaner cleaner = Cleaner.create();
     private static final HashMap<String, BufferedImage> images = new HashMap<>();
-    private static final HashMap<Integer, WeakReference<DComponent>> compids = new HashMap<>();
-    private static final HashMap<Integer, ArrayList<String>> ports = new HashMap<>();
+    private static final HashMap<Long, WeakReference<DComponent>> compids = new HashMap<>();
+    private static final HashMap<Long, ArrayList<String>> ports = new HashMap<>();
     private static final ReentrantReadWriteLock compidLock = new ReentrantReadWriteLock();
     private static final ReentrantReadWriteLock portLock = new ReentrantReadWriteLock();
     private static Object stateKey = new Object();
@@ -111,7 +111,7 @@ public final class ResourceManager {
         }
 
         // Copy all componets and save their original id
-        Map<DComponent, Integer> newComps = iComps.stream().collect(Collectors.toMap(DComponent::safeCopy, DComponent::getId));
+        Map<DComponent, Long> newComps = iComps.stream().collect(Collectors.toMap(DComponent::safeCopy, DComponent::getId));
 
         if(Utils.checkErrors() != null) {
             // If an error occured, warn the user and do nothing
@@ -158,7 +158,7 @@ public final class ResourceManager {
         }
 
         // Map old ids to new ids
-        Map<Integer, Integer> idMap = newComps.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, e -> e.getKey().getId()));
+        Map<Long, Long> idMap = newComps.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, e -> e.getKey().getId()));
 
         // Ignore any lines which did not have both of their components copied
         iLines.removeIf(line -> !idMap.keySet().contains(line.compId1) || !idMap.keySet().contains(line.compId2));
@@ -214,12 +214,12 @@ public final class ResourceManager {
      * @return The id allocated to the component
      * @see #getComponent(int) 
      */
-    public static int allocId(DComponent comp) {
+    public static long allocId(DComponent comp) {
         // Lock the component lock
         compidLock.writeLock().lock();
         try {
             // Search for an id
-            for(int i = 0; i < Integer.MAX_VALUE; i++) {
+            for(long i = 0; i < Long.MAX_VALUE; i++) {
                 // If the id <i> is not in use
                 if(!compids.containsKey(i)) {
                     // Map the component to id <i>
@@ -248,7 +248,7 @@ public final class ResourceManager {
      * @return The component with the specified id or <code>null</code> if none exists
      * @see #allocId(code.DComponent) 
      */
-    public static DComponent getComponent(int id) {
+    public static DComponent getComponent(long id) {
         // Lock the component lock
         compidLock.readLock().lock();
         try {
@@ -308,7 +308,7 @@ public final class ResourceManager {
      * @see #portStatus(code.DComponent, java.lang.String) 
      * @see #portStatus(int, java.lang.String) 
      */
-    public static void reservePort(int comp, String port) throws IllegalArgumentException {
+    public static void reservePort(long comp, String port) throws IllegalArgumentException {
         // Lock the port lock
         portLock.writeLock().lock();
         try {
@@ -375,7 +375,7 @@ public final class ResourceManager {
      * @see #portStatus(code.DComponent, java.lang.String) 
      * @see #portStatus(int, java.lang.String) 
      */
-    public static void freePort(int comp, String port) {
+    public static void freePort(long comp, String port) {
         // Lock the port lock
         portLock.writeLock().lock();
         try {
@@ -420,7 +420,7 @@ public final class ResourceManager {
      * @see #freePort(code.DComponent, java.lang.String) 
      * @see #freePort(int, java.lang.String) 
      */
-    public static boolean portStatus(int comp, String port) {
+    public static boolean portStatus(long comp, String port) {
         // Lock the port lock
         portLock.readLock().lock();
         try {
@@ -438,7 +438,7 @@ public final class ResourceManager {
         }
     }
 
-    private static void doDeallocId(int id, Object stateKey) {
+    private static void doDeallocId(long id, Object stateKey) {
         if(stateKey != ResourceManager.stateKey) {
             // The stateKey has changed. The requested component has already been freed
             return;
@@ -466,9 +466,9 @@ public final class ResourceManager {
     }
 
     private static class DeallocIdRunner implements Runnable {
-        private final int id;
+        private final long id;
         private final Object stateKey;
-        DeallocIdRunner(int id, Object stateKey) {
+        DeallocIdRunner(long id, Object stateKey) {
             this.id = id;
             this.stateKey = stateKey;
         }

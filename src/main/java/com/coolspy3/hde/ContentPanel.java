@@ -74,7 +74,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private final Point mouseDragStart;
     private final Point mousePos;
 
-    private int selectedPortCompId;
+    private long selectedPortCompId;
     private final Point2D.Double selectedPortPos;
     private String selectedPortId;
 
@@ -86,7 +86,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private final Point2D.Double lineStart;
     private double linePXMov;
     private boolean lineStartX;
-    private int lineStartCompId;
+    private long lineStartCompId;
     private String lineStartPortId;
     private final ArrayList<Line> lines;
 
@@ -432,7 +432,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Add selection to clipboard
             clipboardComps.addAll(draggedComponents);
             clipboardLines.addAll(lines);
-            List<Integer> clipboardIds = clipboardComps.stream().map(DComponent::getId).collect(Collectors.toList());
+            List<Long> clipboardIds = clipboardComps.stream().map(DComponent::getId).collect(Collectors.toList());
 
             // Remove all lines unless both their endpoints are part of the clipboard
             clipboardLines.removeIf(line -> !clipboardIds.contains(line.compId1) || !clipboardIds.contains(line.compId2));
@@ -717,15 +717,15 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private void initComps() {
         // Attempt to load base component classes
         // This causes their static blocks to be run
-        tryInit("code.components.Junction");
-        tryInit("code.components.DBuffer");
-        tryInit("code.components.DNOTGate");
-        tryInit("code.components.DANDGate");
-        tryInit("code.components.DORGate");
-        tryInit("code.components.DNANDGate");
-        tryInit("code.components.DNORGate");
-        tryInit("code.components.DXORGate");
-        tryInit("code.components.DXNORGate");
+        tryInit("com.coolspy3.hde.components.Junction");
+        tryInit("com.coolspy3.hde.components.DBuffer");
+        tryInit("com.coolspy3.hde.components.DNOTGate");
+        tryInit("com.coolspy3.hde.components.DANDGate");
+        tryInit("com.coolspy3.hde.components.DORGate");
+        tryInit("com.coolspy3.hde.components.DNANDGate");
+        tryInit("com.coolspy3.hde.components.DNORGate");
+        tryInit("com.coolspy3.hde.components.DXORGate");
+        tryInit("com.coolspy3.hde.components.DXNORGate");
     }
 
     private void tryInit(String clazz) {

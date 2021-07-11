@@ -12,7 +12,7 @@ public class Line implements Serializable {
     /**
      * The id of the first component to which this Line is connected
      */
-    public final int compId1;
+    public final long compId1;
     /**
      * The id of the port on the first component to which this Line is connected
      */
@@ -20,7 +20,7 @@ public class Line implements Serializable {
     /**
      * The id of the second component to which this Line is connected
      */
-    public final int compId2;
+    public final long compId2;
     /**
      * The id of the port on the second component to which this Line is connected
      */
@@ -43,7 +43,7 @@ public class Line implements Serializable {
      * @param isHoris Whether the line initially moves in the horizontal direction
      * @param movPer The percentage of the line between the first component and the first bend in the Line
      */
-    public Line(int compId1, String portId1, int compId2, String portId2, boolean isHoris, double movPer) {
+    public Line(long compId1, String portId1, long compId2, String portId2, boolean isHoris, double movPer) {
         this.compId1 = compId1;
         this.portId1 = portId1;
         this.compId2 = compId2;

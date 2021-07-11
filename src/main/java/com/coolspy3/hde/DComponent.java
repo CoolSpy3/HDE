@@ -20,7 +20,7 @@ public class DComponent implements Serializable {
 
     private static final long serialVersionUID = 8551699257836397079L;
 
-    private final int id;
+    private final long id;
     /**
      * The alias of the image which should be used when rendering this component
      * @see ResourceManager#getImage(java.lang.String) 
@@ -149,7 +149,7 @@ public class DComponent implements Serializable {
      * @return The unique id of this component
      * @see ResourceManager#allocId(code.DComponent) 
      */
-    public int getId() {
+    public long getId() {
         return id;
     }
 
