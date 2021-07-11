@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a component which exists in the editor
+ */
 public class EditorComponent extends BaseComponent<Pair<EditorComponent.Side, Integer>> implements DisplayableComponent {
 
     private static final long serialVersionUID = -548534437516062448L;
@@ -37,18 +40,38 @@ public class EditorComponent extends BaseComponent<Pair<EditorComponent.Side, In
         this.rotation = 0;
     }
 
+    /**
+     * Adds a port to the left side of this component
+     * @param portId The id of the port
+     * @param pos The distance of the port from the top left corner of this component
+     */
     protected void putLeft(String portId, int pos) {
         ports.put(portId, new Pair<>(Side.LEFT, pos));
     }
 
+    /**
+     * Adds a port to the right side of this component
+     * @param portId The id of the port
+     * @param pos The distance of the port from the top right corner of this component
+     */
     protected void putRight(String portId, int pos) {
         ports.put(portId, new Pair<>(Side.RIGHT, pos));
     }
 
+    /**
+     * Adds a port to the top side of this component
+     * @param portId The id of the port
+     * @param pos The distance of the port from the top left corner of this component
+     */
     protected void putTop(String portId, int pos) {
         ports.put(portId, new Pair<>(Side.TOP, pos));
     }
 
+    /**
+     * Adds a port to the bottom side of this component
+     * @param portId The id of the port
+     * @param pos The distance of the port from the bottom left corner of this component
+     */
     protected void putBottom(String portId, int pos) {
         ports.put(portId, new Pair<>(Side.BOTTOM, pos));
     }
@@ -131,22 +154,39 @@ public class EditorComponent extends BaseComponent<Pair<EditorComponent.Side, In
         });
     }
 
+    /**
+     * Retrieves all of the ports of the given side of this component
+     * @param side The side on which to retrieve the ports
+     * @return A map mapping all the ids of the ports on the given side of this component to their distances along that side
+     */
     public Map<String, Integer> getPortsOnSide(Side side) {
         return ports.entrySet().stream().filter(port -> port.getValue().getT() == side).collect(Collectors.toMap(Map.Entry::getKey, port -> port.getValue().getU()));
     }
 
+    /**
+     * @return A map mapping all the ids of the ports on the left side of this component to their distances from the top left corner
+     */
     public Map<String, Integer> getLeftPorts() {
         return getPortsOnSide(Side.LEFT);
     }
 
+    /**
+     * @return A map mapping all the ids of the ports on the right side of this component to their distances from the top right corner
+     */
     public Map<String, Integer> getRightPorts() {
         return getPortsOnSide(Side.RIGHT);
     }
 
+    /**
+     * @return A map mapping all the ids of the ports on the top side of this component to their distances from the top left corner
+     */
     public Map<String, Integer> getTopPorts() {
         return getPortsOnSide(Side.TOP);
     }
 
+    /**
+     * @return A map mapping all the ids of the ports on the bottom side of this component to their distances from the bottom left corner
+     */
     public Map<String, Integer> getBottomPorts() {
         return getPortsOnSide(Side.BOTTOM);
     }
@@ -205,12 +245,35 @@ public class EditorComponent extends BaseComponent<Pair<EditorComponent.Side, In
         return ResourceManager.getImage(getImageName() + (getRotation() * 90));
     }
 
+    /**
+     * Sets the position of this component
+     * @param x The x coordinate to which to set the position
+     * @param y The y coordinate to which to set the position
+     */
     public void setPosition(double x, double y) {
         this.pos.setLocation(x, y);
     }
 
+    /**
+     * Represents a side on a component on which ports can be located
+     */
     public static enum Side {
-        LEFT, RIGHT, TOP, BOTTOM;
+        /**
+         * Represents the left side of a component
+         */
+        LEFT,
+        /**
+         * Represents the right side of a component
+         */
+        RIGHT,
+        /**
+         * Represents the top side of a component
+         */
+        TOP,
+        /**
+         * Represents the bottom side of a component
+         */
+        BOTTOM;
 
         private Side() {}
     }

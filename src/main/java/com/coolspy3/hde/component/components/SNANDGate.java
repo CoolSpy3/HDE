@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 
 /**
- * Represents a NAND gate logic component
+ * Represents a NAND gate which can be displayed in the simulator
  */
 public class SNANDGate extends SimulatedComponent {
 
@@ -23,8 +23,10 @@ public class SNANDGate extends SimulatedComponent {
     }
 
     /**
-     * Creates a new DNANDGate at the given position
-     * @param pos The top left corner of the component
+     * Creates a new SNANDGate at the given position
+     * @param pos The position of the top left corner of the component
+     * @param rotation The rotation of this component as a number of increments of 90 degrees clockwise between 0 and 3
+     * @param component The LogicComponent that this SimulatedComponent is rendering
      */
     public SNANDGate(Point2D.Double pos, int rotation, LogicComponent component) {
         super("DNANDGate", new Dimension(100, 50), pos, rotation, component);

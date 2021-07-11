@@ -214,7 +214,7 @@ public final class ResourceManager {
      * Allocates a unique id for the given component
      * @param comp The component for which an id should be allocated
      * @return The id allocated to the component
-     * @see #getComponent(int) 
+     * @see #getComponent(long) 
      */
     public static long allocId(BaseComponent<?> comp) {
         // Lock the component lock
@@ -248,7 +248,7 @@ public final class ResourceManager {
      * Retrieves the component with the specified id
      * @param id The id for which to search
      * @return The component with the specified id or <code>null</code> if none exists
-     * @see #allocId(code.DComponent) 
+     * @see #allocId(com.coolspy3.hde.component.BaseComponent)  
      */
     public static BaseComponent<?> getComponent(long id) {
         // Lock the component lock
@@ -267,13 +267,13 @@ public final class ResourceManager {
      * Attempts to reserve all of the ports used by the specified Line
      * @param line The Line which should have its ports reserved
      * @throws IllegalArgumentException if one or more of the ports used by this line is already reserved
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void reservePorts(Line line) throws IllegalArgumentException {
         reservePort(line.compId1, line.portId1);
@@ -286,12 +286,12 @@ public final class ResourceManager {
      * @param port The id of the port to be reserved
      * @throws IllegalArgumentException if the port is already reserved
      * @see #reservePorts(code.Line)  
-     * @see #reservePort(int, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void reservePort(BaseComponent<?> comp, String port) throws IllegalArgumentException {
         reservePort(comp.getId(), port);
@@ -303,12 +303,12 @@ public final class ResourceManager {
      * @param port The id of the port to be reserved
      * @throws IllegalArgumentException if the port is already reserved
      * @see #reservePorts(code.Line) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void reservePort(long comp, String port) throws IllegalArgumentException {
         // Lock the port lock
@@ -336,13 +336,13 @@ public final class ResourceManager {
     /**
      * Attempts to free the ports used by the given Line
      * @param line The Line which should have its ports freed
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
      * @see #reservePorts(code.Line) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void freePorts(Line line) {
         freePort(line.compId1, line.portId1);
@@ -354,12 +354,12 @@ public final class ResourceManager {
      * @param comp The component on which the port is located
      * @param port The id of the port to be freed
      * @see #freePorts(code.Line) 
-     * @see #freePort(int, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
      * @see #reservePorts(code.Line) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void freePort(BaseComponent<?> comp, String port) {
         freePort(comp.getId(), port);
@@ -370,12 +370,12 @@ public final class ResourceManager {
      * @param comp The id of the component on which the port is located
      * @param port The id of the port to be freed
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
      * @see #reservePorts(code.Line) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
-     * @see #portStatus(code.DComponent, java.lang.String) 
-     * @see #portStatus(int, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
      */
     public static void freePort(long comp, String port) {
         // Lock the port lock
@@ -397,13 +397,13 @@ public final class ResourceManager {
      * @param comp The component on which the port is located
      * @param port The id of the port to check
      * @return Whether the given port is reserved
-     * @see #portStatus(int, java.lang.String) 
-     * @see #reservePorts(code.Line)(code.BaseComponent, java.lang.String) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
+     * @see #portStatus(long, java.lang.String) 
+     * @see #reservePorts(code.Line)
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
      */
     public static boolean portStatus(BaseComponent<?> comp, String port) {
         return portStatus(comp.getId(), port);
@@ -414,13 +414,13 @@ public final class ResourceManager {
      * @param comp The id of the component on which the port is located
      * @param port The id of the port to check
      * @return Whether the given port is reserved
-     * @see #portStatus(code.DComponent, java.lang.String) 
+     * @see #portStatus(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
      * @see #reservePorts(code.Line) 
-     * @see #reservePort(code.DComponent, java.lang.String) 
-     * @see #reservePort(int, java.lang.String) 
+     * @see #reservePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #reservePort(long, java.lang.String) 
      * @see #freePorts(code.Line) 
-     * @see #freePort(code.DComponent, java.lang.String) 
-     * @see #freePort(int, java.lang.String) 
+     * @see #freePort(com.coolspy3.hde.component.BaseComponent, java.lang.String) 
+     * @see #freePort(long, java.lang.String) 
      */
     public static boolean portStatus(long comp, String port) {
         // Lock the port lock

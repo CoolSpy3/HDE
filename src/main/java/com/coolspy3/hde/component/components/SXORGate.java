@@ -8,7 +8,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 
 /**
- * Represents a XOR gate logic component
+ * Represents a XOR gate which can be displayed in the simulator
  */
 public class SXORGate extends SimulatedComponent {
 
@@ -23,8 +23,10 @@ public class SXORGate extends SimulatedComponent {
     }
 
     /**
-     * Creates a new DXORGate at the given position
-     * @param pos The top left corner of the component
+     * Creates a new SXORGate at the given position
+     * @param pos The position of the top left corner of the component
+     * @param rotation The rotation of this component as a number of increments of 90 degrees clockwise between 0 and 3
+     * @param component The LogicComponent that this SimulatedComponent is rendering
      */
     public SXORGate(Point2D.Double pos, int rotation, LogicComponent component) {
         super("DXORGate", new Dimension(100, 50), pos, rotation, component);

@@ -5,7 +5,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * Represents a component in editing mode
+ * Represents a component which contains an id and a set of ports
+ * @param <T> The data type to associate with the ports on this component
  */
 public class BaseComponent<T> implements Serializable {
 
@@ -13,15 +14,12 @@ public class BaseComponent<T> implements Serializable {
 
     private final long id;
     /**
-     * A Map mapping port ids on the left side of this component to their distances from the top left corner of this component
+     * A Map mapping port ids on this component to a component-defined value
      */
     public final HashMap<String, T> ports;
 
     /**
-     * Creates a new DComponent with the given information
-     * @param imageName The alias of the image which should be used when rendering this component
-     * @param size The size of this component in component coordinate space
-     * @param pos The position of this component in component coordinate space
+     * Creates a new BaseComponent and allocates it an id
      */
     @SuppressWarnings("LeakingThisInConstructor")
     public BaseComponent() {
@@ -34,7 +32,7 @@ public class BaseComponent<T> implements Serializable {
 
     /**
      * @return The unique id of this component
-     * @see ResourceManager#allocId(code.DComponent) 
+     * @see ResourceManager#allocId(com.coolspy3.hde.component.BaseComponent) 
      */
     public long getId() {
         return id;

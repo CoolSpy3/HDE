@@ -2,15 +2,15 @@ package com.coolspy3.hde;
 
 import com.coolspy3.hde.component.ComponentButton;
 import com.coolspy3.hde.component.EditorComponent;
-import com.coolspy3.hde.component.components.EBuffer;
 import com.coolspy3.hde.component.components.EANDGate;
+import com.coolspy3.hde.component.components.EBuffer;
+import com.coolspy3.hde.component.components.EJunction;
 import com.coolspy3.hde.component.components.ENANDGate;
 import com.coolspy3.hde.component.components.ENORGate;
 import com.coolspy3.hde.component.components.ENOTGate;
 import com.coolspy3.hde.component.components.EORGate;
 import com.coolspy3.hde.component.components.EXNORGate;
 import com.coolspy3.hde.component.components.EXORGate;
-import com.coolspy3.hde.component.components.EJunction;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Window;
