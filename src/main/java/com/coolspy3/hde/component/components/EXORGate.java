@@ -1,32 +1,22 @@
-package com.coolspy3.hde.components;
+package com.coolspy3.hde.component.components;
 
-import com.coolspy3.hde.DComponent;
-import com.coolspy3.hde.ResourceManager;
+import com.coolspy3.hde.component.EditorComponent;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 
 /**
  * Represents a XOR gate logic component
  */
-public class DXORGate extends DComponent {
+public class EXORGate extends EditorComponent {
 
     private static final long serialVersionUID = -2448682944040958907L;
-
-    static {
-        try {
-            ResourceManager.loadImages("DXORGate", "Assets/XORGate.png");
-        } catch(IOException e) {
-            e.printStackTrace(System.err);
-        }
-    }
 
     /**
      * Creates a new DXORGate at the given position
      * @param pos The top left corner of the component
      */
-    public DXORGate(Point pos) {
+    public EXORGate(Point pos) {
         this(new Point2D.Double(pos.x, pos.y));
     }
 
@@ -34,11 +24,11 @@ public class DXORGate extends DComponent {
      * Creates a new DXORGate at the given position
      * @param pos The top left corner of the component
      */
-    public DXORGate(Point2D.Double pos) {
+    public EXORGate(Point2D.Double pos) {
         super("DXORGate", new Dimension(100, 50), pos);
-        linputs.put("I1", 10);
-        linputs.put("I2", 40);
-        rinputs.put("O", 24);
+        putLeft("I1", 10);
+        putLeft("I2", 40);
+        putRight("O", 24);
     }
 
 }

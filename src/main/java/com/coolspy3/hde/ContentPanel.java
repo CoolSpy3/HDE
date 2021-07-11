@@ -1,6 +1,16 @@
 package com.coolspy3.hde;
 
-import com.coolspy3.hde.components.Junction;
+import com.coolspy3.hde.component.EditorComponent;
+import com.coolspy3.hde.component.components.EJunction;
+import com.coolspy3.hde.component.components.SANDGate;
+import com.coolspy3.hde.component.components.SBuffer;
+import com.coolspy3.hde.component.components.SJunction;
+import com.coolspy3.hde.component.components.SNANDGate;
+import com.coolspy3.hde.component.components.SNORGate;
+import com.coolspy3.hde.component.components.SNOTGate;
+import com.coolspy3.hde.component.components.SORGate;
+import com.coolspy3.hde.component.components.SXNORGate;
+import com.coolspy3.hde.component.components.SXORGate;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -66,9 +76,9 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private final GUI gui;
     private final ComponentSelector selector;
 
-    private final ArrayList<DComponent> comps;
-    private DComponent selectedComponent;
-    private final ArrayList<DComponent> draggedComponents;
+    private final ArrayList<EditorComponent> comps;
+    private EditorComponent selectedComponent;
+    private final ArrayList<EditorComponent> draggedComponents;
     private final Point tldc;
     private final Point brdc;
     private final Point mouseDragStart;
@@ -90,7 +100,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private String lineStartPortId;
     private final ArrayList<Line> lines;
 
-    private final ArrayList<DComponent> clipboardComps;
+    private final ArrayList<EditorComponent> clipboardComps;
     private final ArrayList<Line> clipboardLines;
 
     /**
@@ -155,7 +165,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
 
         try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             // Load the data from the file
-            comps.addAll((Collection<? extends DComponent>)ois.readObject());
+            comps.addAll((Collection<? extends EditorComponent>)ois.readObject());
             lines.addAll((Collection<? extends Line>)ois.readObject());
 
             // Register all of the components and lines
@@ -224,11 +234,11 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     /**
      * @return The component which the user is currently hovering over
      */
-    public synchronized DComponent getSelectedComponent() {
+    public synchronized EditorComponent getSelectedComponent() {
         return selectedComponent;
     }
 
-    private synchronized void setSelectedComponent(DComponent comp) {
+    private synchronized void setSelectedComponent(EditorComponent comp) {
         this.selectedComponent = comp;
     }
 
@@ -238,7 +248,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
      * @param pos The position to check in frame coordinates
      * @return Whether the component collides with the given point
      */
-    public boolean collidesWithPoint(DComponent comp, Point pos) {
+    public boolean collidesWithPoint(EditorComponent comp, Point pos) {
         return toFrameCoords(comp.getBounds()).contains(pos);
     }
 
@@ -246,12 +256,12 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
      * Adds the given component to the list of components currently selected by the user
      * @param comp The component to add
      */
-    public void addComponentToSelection(DComponent comp) {
-        Point compPos = toFrameCoords(comp.pos);
+    public void addComponentToSelection(EditorComponent comp) {
+        Point compPos = toFrameCoords(comp.getPosition());
         if(draggedComponents.isEmpty()) {
             // If no components are dragged, set the selection rectangle to the bounds of the component
             tldc.setLocation(compPos);
-            compPos.translate(Utils.asInt(comp.size.width*scale), Utils.asInt(comp.size.height*scale));
+            compPos.translate(Utils.asInt(comp.getSize().width*scale), Utils.asInt(comp.getSize().height*scale));
             brdc.setLocation(compPos);
         } else {
             // Otherwise, set it to expand (if neccessary) to encompass the new component
@@ -261,7 +271,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             if(compPos.y < tldc.y) {
                 tldc.setLocation(tldc.x, compPos.y);
             }
-            compPos.translate(Utils.asInt(comp.size.width*scale), Utils.asInt(comp.size.height*scale));
+            compPos.translate(Utils.asInt(comp.getSize().width*scale), Utils.asInt(comp.getSize().height*scale));
             if(compPos.x > brdc.x) {
                 brdc.setLocation(compPos.x, brdc.y);
             }
@@ -296,8 +306,8 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         // Draw components (if they are on screen)
         comps.forEach(comp -> {
             if(toFrameCoords(comp.getBounds()).intersects(getBounds())) {
-                Point tl = toFrameCoords(comp.pos);
-                g.drawImage(comp.getImage(), tl.x, tl.y, Utils.asInt(comp.size.width*scale), Utils.asInt(comp.size.height*scale), null);
+                Point tl = toFrameCoords(comp.getPosition());
+                g.drawImage(comp.getImage(), tl.x, tl.y, Utils.asInt(comp.getSize().width*scale), Utils.asInt(comp.getSize().height*scale), null);
             }
         });
 
@@ -329,9 +339,9 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
 
         // Draw lines (if on screen)
         lines.forEach((line) -> {
-            if(getBounds().contains(toFrameCoords(ResourceManager.getComponent(line.compId1).getPoint(line.portId1))) || getBounds().contains(toFrameCoords(ResourceManager.getComponent(line.compId2).getPoint(line.portId2)))) {
-                Utils.drawLine(g, toFrameCoords(ResourceManager.getComponent(line.compId1).getPoint(line.portId1)),
-                        toFrameCoords(ResourceManager.getComponent(line.compId2).getPoint(line.portId2)), line.isHoris, line.movPer);
+            if(getBounds().contains(toFrameCoords(((EditorComponent)ResourceManager.getComponent(line.compId1)).getPoint(line.portId1))) || getBounds().contains(toFrameCoords(((EditorComponent)ResourceManager.getComponent(line.compId2)).getPoint(line.portId2)))) {
+                Utils.drawLine(g, toFrameCoords(((EditorComponent)ResourceManager.getComponent(line.compId1)).getPoint(line.portId1)),
+                        toFrameCoords(((EditorComponent)ResourceManager.getComponent(line.compId2)).getPoint(line.portId2)), line.isHoris, line.movPer);
             }
         });
 
@@ -379,13 +389,13 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         // If a single component is selected
         } else if(e.getKeyChar() == 'r' && draggedComponents.size() == 1) {
             // Rotate selected component
-            DComponent comp = draggedComponents.get(0);
+            EditorComponent comp = draggedComponents.get(0);
             comp.rotate();
 
             // Update selection
-            tldc.setLocation(toFrameCoords(comp.pos));
-            brdc.setLocation(toFrameCoords(comp.pos));
-            brdc.translate(comp.size.width*(int)scale, comp.size.height*(int)scale);
+            tldc.setLocation(toFrameCoords(comp.getPosition()));
+            brdc.setLocation(toFrameCoords(comp.getPosition()));
+            brdc.translate(comp.getSize().width*(int)scale, comp.getSize().height*(int)scale);
         }
     }
 
@@ -432,14 +442,14 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // Add selection to clipboard
             clipboardComps.addAll(draggedComponents);
             clipboardLines.addAll(lines);
-            List<Long> clipboardIds = clipboardComps.stream().map(DComponent::getId).collect(Collectors.toList());
+            List<Long> clipboardIds = clipboardComps.stream().map(EditorComponent::getId).collect(Collectors.toList());
 
             // Remove all lines unless both their endpoints are part of the clipboard
             clipboardLines.removeIf(line -> !clipboardIds.contains(line.compId1) || !clipboardIds.contains(line.compId2));
         }
         if(e.getKeyCode() == KeyEvent.VK_V && ctrl) {
             // Copy components
-            ArrayList<DComponent> newComps = new ArrayList<>();
+            ArrayList<EditorComponent> newComps = new ArrayList<>();
             ResourceManager.addAsNew(clipboardComps, clipboardLines, fromFrameCoords(mousePos), newComps, lines, this);
 
             // Clear selected components
@@ -479,10 +489,10 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             linePXMov = 0.5;
 
             // Determine whether line will be horizontal or vertical
-            DComponent selectedPortComp = ResourceManager.getComponent(selectedPortCompId);
+            EditorComponent selectedPortComp = (EditorComponent)ResourceManager.getComponent(selectedPortCompId);
             Point2D.Double selectedPortPosRTComp = new Point2D.Double(selectedPortPos.x, selectedPortPos.y);
-            selectedPortPosRTComp.setLocation(selectedPortPosRTComp.x-selectedPortComp.pos.x-1, selectedPortPosRTComp.y-selectedPortComp.pos.y-1);
-            lineStartX = selectedPortComp.linputs.containsValue((int)selectedPortPosRTComp.getY()) || selectedPortComp.rinputs.containsValue((int)selectedPortPosRTComp.getY());
+            selectedPortPosRTComp.setLocation(selectedPortPosRTComp.x-selectedPortComp.getPosition().x-1, selectedPortPosRTComp.y-selectedPortComp.getPosition().y-1);
+            lineStartX = selectedPortComp.getLeftPorts().containsValue((int)selectedPortPosRTComp.getY()) || selectedPortComp.getRightPorts().containsValue((int)selectedPortPosRTComp.getY());
 
             // Start drawing the line
             lineStartCompId = selectedPortCompId;
@@ -519,7 +529,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             if(selectedPortCompId == -1 || ResourceManager.portStatus(selectedPortCompId, selectedPortId) || (selectedPortCompId == lineStartCompId && selectedPortId.equals(lineStartPortId))) {
                 // If no port is selected (or that port is in use)
 
-                // Create a Junction at the specified position
+                // Create a EJunction at the specified position
 
                 // Get the position of the click in the component coordinate system
                 Point2D.Double ePointNFC = fromFrameCoords(e.getPoint());
@@ -527,8 +537,8 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
                 // The line will end in the same horizontal / vertical direction it started in unless the bend occures at l00% of the line's length
                 boolean lineEndX = linePXMov == 1 ? !lineStartX : lineStartX;
 
-                // Create a Junction so that the new port aligns with the mouse position
-                Junction junction = new Junction(new Point2D.Double(
+                // Create a EJunction so that the new port aligns with the mouse position
+                EJunction junction = new EJunction(new Point2D.Double(
                         lineEndX ? ePointNFC.x - (lineStart.x > ePointNFC.x ? 20 : 0) : ePointNFC.x-9,
                         lineEndX ? ePointNFC.y-9 : ePointNFC.y - (lineStart.y > ePointNFC.y ? 20 : 0)));
                 comps.add(junction);
@@ -557,7 +567,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             }
         } else {
             // Add a new component to the selection if one is selected
-            DComponent comp = selector.getAndReset(fromFrameCoords(e.getPoint()));
+            EditorComponent comp = selector.getAndReset(fromFrameCoords(e.getPoint()));
             if(comp != null) {
                 comps.add(comp);
             }
@@ -610,7 +620,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             tldc.translate(rdx, rdy);
             brdc.translate(rdx, rdy);
             draggedComponents.forEach(comp -> {
-                comp.pos.setLocation(comp.pos.x + dx, comp.pos.y + dy);
+                comp.setPosition(comp.getPosition().x + dx, comp.getPosition().y + dy);
             });
         }
 
@@ -634,7 +644,7 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
         double dist = Integer.MAX_VALUE;
 
         // For every component
-        for(DComponent comp : comps) {
+        for(EditorComponent comp : comps) {
             // If it's on screen
             if(toFrameCoords(comp.getBounds()).intersects(getBounds())) {
                 // For every port it has
@@ -676,20 +686,20 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
             // If the scale changed and components are being dragged
             if(oldScale != scale && !draggedComponents.isEmpty()) {
                 // Update the selection box to reflect the new positions of the components
-                DComponent comp0 = draggedComponents.get(0);
-                Point compPos0 = toFrameCoords(comp0.pos);
+                EditorComponent comp0 = draggedComponents.get(0);
+                Point compPos0 = toFrameCoords(comp0.getPosition());
                 tldc.setLocation(compPos0);
-                compPos0.translate(Utils.asInt(comp0.size.width*scale), Utils.asInt(comp0.size.height*scale));
+                compPos0.translate(Utils.asInt(comp0.getSize().width*scale), Utils.asInt(comp0.getSize().height*scale));
                 brdc.setLocation(compPos0);
                 draggedComponents.forEach(comp -> {
-                    Point compPos = toFrameCoords(comp.pos);
+                    Point compPos = toFrameCoords(comp.getPosition());
                     if(compPos.x < tldc.x) {
                         tldc.setLocation(compPos.x, tldc.y);
                     }
                     if(compPos.y < tldc.y) {
                         tldc.setLocation(tldc.x, compPos.y);
                     }
-                    compPos.translate(Utils.asInt(comp.size.width*scale), Utils.asInt(comp.size.height*scale));
+                    compPos.translate(Utils.asInt(comp.getSize().width*scale), Utils.asInt(comp.getSize().height*scale));
                     if(compPos.x > brdc.x) {
                         brdc.setLocation(compPos.x, brdc.y);
                     }
@@ -717,15 +727,15 @@ public class ContentPanel extends JPanel implements ContainerListener, KeyListen
     private void initComps() {
         // Attempt to load base component classes
         // This causes their static blocks to be run
-        tryInit("com.coolspy3.hde.components.Junction");
-        tryInit("com.coolspy3.hde.components.DBuffer");
-        tryInit("com.coolspy3.hde.components.DNOTGate");
-        tryInit("com.coolspy3.hde.components.DANDGate");
-        tryInit("com.coolspy3.hde.components.DORGate");
-        tryInit("com.coolspy3.hde.components.DNANDGate");
-        tryInit("com.coolspy3.hde.components.DNORGate");
-        tryInit("com.coolspy3.hde.components.DXORGate");
-        tryInit("com.coolspy3.hde.components.DXNORGate");
+        tryInit(SANDGate.class.getName());
+        tryInit(SBuffer.class.getName());
+        tryInit(SNANDGate.class.getName());
+        tryInit(SNORGate.class.getName());
+        tryInit(SNOTGate.class.getName());
+        tryInit(SORGate.class.getName());
+        tryInit(SXNORGate.class.getName());
+        tryInit(SXORGate.class.getName());
+        tryInit(SJunction.class.getName());
     }
 
     private void tryInit(String clazz) {

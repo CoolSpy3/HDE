@@ -1,4 +1,4 @@
-package com.coolspy3.hde;
+package com.coolspy3.hde.component;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
@@ -52,11 +52,11 @@ public abstract class ComponentButton extends JToggleButton {
     }
 
     /**
-     * Creates a new DComponent at the specified position
+     * Creates a new BaseComponent at the specified position
      * @param location The center of the new component
      * @return The newly created component
      */
-    public abstract DComponent getComponent(Point2D.Double location);
+    public abstract EditorComponent getComponent(Point2D.Double location);
 
     /**
      * Represents a {@link ComponentButton} which preforms the math to center a given component
@@ -119,17 +119,17 @@ public abstract class ComponentButton extends JToggleButton {
         }
 
         @Override
-        public DComponent getComponent(Point2D.Double location) {
+        public EditorComponent getComponent(Point2D.Double location) {
             // The top left corner of the component will be at the center minus half the component's width and height
             return getUncenteredDComponent(new Point2D.Double(location.x-size.width/2,location.y-size.height/2));
         }
 
         /**
-         * Creates a new DComponent at the specified position
+         * Creates a new BaseComponent at the specified position
          * @param location The top left corner of the new component
          * @return The newly created component
          */
-        public abstract DComponent getUncenteredDComponent(Point2D.Double location);
+        public abstract EditorComponent getUncenteredDComponent(Point2D.Double location);
 
     }
 
@@ -144,7 +144,7 @@ public abstract class ComponentButton extends JToggleButton {
         /**
          * The function which provides the implementation for {@link #getUncenteredDComponent(java.awt.geom.Point2D.Double) }
          */
-        public final Function<Point2D.Double, DComponent> componentFunction;
+        public final Function<Point2D.Double, EditorComponent> componentFunction;
 
         /**
          * Creates an initially unselected toggle button
@@ -153,7 +153,7 @@ public abstract class ComponentButton extends JToggleButton {
          * @param size The size of the component which will be created by the {@link #getComponent(java.awt.geom.Point2D.Double) } method of this button
          * @param componentFunction The function which will be used to generate new components
          */
-        public LambdaComponentButton(Dimension size, Function<Point2D.Double, DComponent> componentFunction) {
+        public LambdaComponentButton(Dimension size, Function<Point2D.Double, EditorComponent> componentFunction) {
             super(size);
             this.componentFunction = componentFunction;
         }
@@ -166,7 +166,7 @@ public abstract class ComponentButton extends JToggleButton {
          * @param size The size of the component which will be created by the {@link #getComponent(java.awt.geom.Point2D.Double) } method of this button
          * @param componentFunction The function which will be used to generate new components
          */
-        public LambdaComponentButton(Icon icon, Dimension size, Function<Point2D.Double, DComponent> componentFunction) {
+        public LambdaComponentButton(Icon icon, Dimension size, Function<Point2D.Double, EditorComponent> componentFunction) {
             super(icon, size);
             this.componentFunction = componentFunction;
         }
@@ -178,7 +178,7 @@ public abstract class ComponentButton extends JToggleButton {
          * @param size The size of the component which will be created by the {@link #getComponent(java.awt.geom.Point2D.Double) } method of this button
          * @param componentFunction The function which will be used to generate new components
          */
-        public LambdaComponentButton(String text, Dimension size, Function<Point2D.Double, DComponent> componentFunction) {
+        public LambdaComponentButton(String text, Dimension size, Function<Point2D.Double, EditorComponent> componentFunction) {
             super(text, size);
             this.componentFunction = componentFunction;
         }
@@ -192,13 +192,13 @@ public abstract class ComponentButton extends JToggleButton {
          * @param size The size of the component which will be created by the {@link #getComponent(java.awt.geom.Point2D.Double) } method of this button
          * @param componentFunction The function which will be used to generate new components
          */
-        public LambdaComponentButton(String text, Icon icon, Dimension size, Function<Point2D.Double, DComponent> componentFunction) {
+        public LambdaComponentButton(String text, Icon icon, Dimension size, Function<Point2D.Double, EditorComponent> componentFunction) {
             super(text, icon, size);
             this.componentFunction = componentFunction;
         }
 
         @Override
-        public DComponent getUncenteredDComponent(Point2D.Double location) {
+        public EditorComponent getUncenteredDComponent(Point2D.Double location) {
             return componentFunction.apply(location);
         }
 

@@ -8,8 +8,6 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Contains utility functions
@@ -118,31 +116,6 @@ public final class Utils {
      */
     public static Rectangle rectangleFromAnyCorners(Point c1, Point c2) {
         return rectangleFromCorners(new Point(Math.min(c1.x, c2.x), Math.min(c1.y, c2.y)), new Point(Math.max(c1.x, c2.x), Math.max(c1.y, c2.y)));
-    }
-
-    /**
-     * Rotates the elements of the given maps.
-     * This causes the elements of map_1 to move to map_2, those of map_2 to move to map_3, ..., and those of map_n to move to map_1
-     * @param <T> The type of keys maintained by the maps
-     * @param <U> The type of mapped values
-     * @param maps The maps of which to rotate the elements
-     */
-    @SafeVarargs
-    public static <T, U> void rotate(Map<T, U>... maps) {
-        if(maps.length < 2) {
-            return;
-        }
-        Map<T, U> buf1 = new HashMap<>();
-        Map<T, U> buf2 = new HashMap<>();
-        for(Map<T, U> map: maps) {
-            buf2.clear();
-            buf2.putAll(buf1);
-            buf1.clear();
-            buf1.putAll(map);
-            map.clear();
-            map.putAll(buf2);
-        }
-        maps[0].putAll(buf1);
     }
 
     //Source: https://stackoverflow.com/questions/20959796/rotate-90-degree-to-right-image-in-java

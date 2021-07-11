@@ -1,5 +1,7 @@
 package com.coolspy3.hde;
 
+import com.coolspy3.hde.component.BaseComponent;
+import com.coolspy3.hde.component.EditorComponent;
 import java.awt.Component;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -24,7 +26,7 @@ public final class ResourceManager {
 
     private static final Cleaner cleaner = Cleaner.create();
     private static final HashMap<String, BufferedImage> images = new HashMap<>();
-    private static final HashMap<Long, WeakReference<DComponent>> compids = new HashMap<>();
+    private static final HashMap<Long, WeakReference<BaseComponent<?>>> compids = new HashMap<>();
     private static final HashMap<Long, ArrayList<String>> ports = new HashMap<>();
     private static final ReentrantReadWriteLock compidLock = new ReentrantReadWriteLock();
     private static final ReentrantReadWriteLock portLock = new ReentrantReadWriteLock();
@@ -104,14 +106,14 @@ public final class ResourceManager {
      * @param outLines A Collection which should receive the copied Lines
      * @param parent The component to center the error dialog on (should an error occur). This can be <code>null</code>.
      */
-    public static void addAsNew(ArrayList<DComponent> iComps, ArrayList<Line> iLines, Point2D.Double newCenter, Collection<DComponent> outComps, Collection<Line> outLines, Component parent) {
+    public static void addAsNew(ArrayList<EditorComponent> iComps, ArrayList<Line> iLines, Point2D.Double newCenter, Collection<EditorComponent> outComps, Collection<Line> outLines, Component parent) {
         if(iComps.isEmpty()) {
             // If there are no input components, nothing needs to be done
             return;
         }
 
         // Copy all componets and save their original id
-        Map<DComponent, Long> newComps = iComps.stream().collect(Collectors.toMap(DComponent::safeCopy, DComponent::getId));
+        Map<EditorComponent, Long> newComps = iComps.stream().collect(Collectors.toMap(EditorComponent::safeCopy, EditorComponent::getId));
 
         if(Utils.checkErrors() != null) {
             // If an error occured, warn the user and do nothing
@@ -124,22 +126,22 @@ public final class ResourceManager {
         // Move the new components to the center point
         {
             // Calculate the bounding box containing the components
-            DComponent comp0 = iComps.get(0); 
+            EditorComponent comp0 = iComps.get(0); 
             Point2D.Double tlc = new Point2D.Double();
-            tlc.setLocation(comp0.pos);
+            tlc.setLocation(comp0.getPosition());
             Point2D.Double brc = new Point2D.Double();
-            tlc.setLocation(comp0.pos);
-            brc.setLocation(brc.x+comp0.size.width, brc.y+comp0.size.height);
-            for(DComponent comp: iComps) {
+            tlc.setLocation(comp0.getPosition());
+            brc.setLocation(brc.x+comp0.getSize().width, brc.y+comp0.getSize().height);
+            for(EditorComponent comp: iComps) {
                 Point2D.Double compPos = new Point2D.Double();
-                compPos.setLocation(comp.pos);
+                compPos.setLocation(comp.getPosition());
                 if(compPos.x < tlc.x) {
                     tlc.setLocation(compPos.x, tlc.y);
                 }
                 if(compPos.y < tlc.y) {
                     tlc.setLocation(tlc.x, compPos.y);
                 }
-                compPos.setLocation(compPos.x+comp.size.width, compPos.y+comp.size.height);
+                compPos.setLocation(compPos.x+comp.getSize().width, compPos.y+comp.getSize().height);
                 if(compPos.x > brc.x) {
                     brc.setLocation(compPos.x, brc.y);
                 }
@@ -154,7 +156,7 @@ public final class ResourceManager {
             double height = brc.y - tlc.y;
             newCenter.setLocation(newCenter.x-width/2, newCenter.y-height/2);
             newCenter.setLocation(newCenter.x-tlc.x, newCenter.y-tlc.y);
-            newComps.keySet().forEach(comp -> comp.pos.setLocation(comp.pos.x+newCenter.x, comp.pos.y+newCenter.y));
+            newComps.keySet().forEach(comp -> comp.setPosition(comp.getPosition().x+newCenter.x, comp.getPosition().y+newCenter.y));
         }
 
         // Map old ids to new ids
@@ -180,7 +182,7 @@ public final class ResourceManager {
      * @param comps The new components to register
      * @param lines The new Lines to register
      */
-    public static void forceLoad(ArrayList<DComponent> comps, ArrayList<Line> lines) {
+    public static void forceLoad(ArrayList<EditorComponent> comps, ArrayList<Line> lines) {
         // Lock the component and port locks
         compidLock.writeLock().lock();
         try {
@@ -214,7 +216,7 @@ public final class ResourceManager {
      * @return The id allocated to the component
      * @see #getComponent(int) 
      */
-    public static long allocId(DComponent comp) {
+    public static long allocId(BaseComponent<?> comp) {
         // Lock the component lock
         compidLock.writeLock().lock();
         try {
@@ -248,7 +250,7 @@ public final class ResourceManager {
      * @return The component with the specified id or <code>null</code> if none exists
      * @see #allocId(code.DComponent) 
      */
-    public static DComponent getComponent(long id) {
+    public static BaseComponent<?> getComponent(long id) {
         // Lock the component lock
         compidLock.readLock().lock();
         try {
@@ -291,7 +293,7 @@ public final class ResourceManager {
      * @see #portStatus(code.DComponent, java.lang.String) 
      * @see #portStatus(int, java.lang.String) 
      */
-    public static void reservePort(DComponent comp, String port) throws IllegalArgumentException {
+    public static void reservePort(BaseComponent<?> comp, String port) throws IllegalArgumentException {
         reservePort(comp.getId(), port);
     }
 
@@ -359,7 +361,7 @@ public final class ResourceManager {
      * @see #portStatus(code.DComponent, java.lang.String) 
      * @see #portStatus(int, java.lang.String) 
      */
-    public static void freePort(DComponent comp, String port) {
+    public static void freePort(BaseComponent<?> comp, String port) {
         freePort(comp.getId(), port);
     }
 
@@ -396,14 +398,14 @@ public final class ResourceManager {
      * @param port The id of the port to check
      * @return Whether the given port is reserved
      * @see #portStatus(int, java.lang.String) 
-     * @see #reservePorts(code.Line) (code.DComponent, java.lang.String) 
+     * @see #reservePorts(code.Line)(code.BaseComponent, java.lang.String) 
      * @see #reservePort(code.DComponent, java.lang.String) 
      * @see #reservePort(int, java.lang.String) 
      * @see #freePorts(code.Line) 
      * @see #freePort(code.DComponent, java.lang.String) 
      * @see #freePort(int, java.lang.String) 
      */
-    public static boolean portStatus(DComponent comp, String port) {
+    public static boolean portStatus(BaseComponent<?> comp, String port) {
         return portStatus(comp.getId(), port);
     }
 
