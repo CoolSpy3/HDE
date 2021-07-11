@@ -43,7 +43,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
     private JMenuItem closeMenuItem;
     private JMenuItem saveMenuItem;
     private JMenuItem saveAsMenuItem;
-    private JMenuItem renderMenuItem;
+    private JMenuItem exportMenuItem;
     private JMenuItem quitMenuItem;
     private JMenu optionsMenu;
     private JCheckBoxMenuItem showGridMenuItem;
@@ -115,11 +115,11 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
         saveAsMenuItem.addActionListener(this);
         saveAsMenuItem.setEnabled(false);
         fileMenu.add(saveAsMenuItem);
-        renderMenuItem = new JMenuItem("Render Project");
-        renderMenuItem.setAccelerator(KeyStroke.getKeyStroke(VK_R, CTRL_DOWN_MASK));
-        renderMenuItem.addActionListener(this);
-        renderMenuItem.setEnabled(false);
-        fileMenu.add(renderMenuItem);
+        exportMenuItem = new JMenuItem("Export Project");
+        exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(VK_E, CTRL_DOWN_MASK));
+        exportMenuItem.addActionListener(this);
+        exportMenuItem.setEnabled(false);
+        fileMenu.add(exportMenuItem);
         fileMenu.addSeparator();
         quitMenuItem = new JMenuItem("Exit");
         quitMenuItem.addActionListener(this);
@@ -157,7 +157,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 // Disable saving
                 saveMenuItem.setEnabled(false);
                 saveAsMenuItem.setEnabled(false);
-                renderMenuItem.setEnabled(false);
+                exportMenuItem.setEnabled(false);
 
                 // Revalidate frame
                 revalidate();
@@ -293,7 +293,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                     // Enable saving
                     saveMenuItem.setEnabled(true);
                     saveAsMenuItem.setEnabled(true);
-                    renderMenuItem.setEnabled(true);
+                    exportMenuItem.setEnabled(true);
 
                     // Revalidate frame
                     revalidate();
@@ -320,7 +320,7 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                     // Enable saving
                     saveMenuItem.setEnabled(true);
                     saveAsMenuItem.setEnabled(true);
-                    renderMenuItem.setEnabled(true);
+                    exportMenuItem.setEnabled(true);
 
                     // Revalidate frame
                     revalidate();
@@ -331,8 +331,8 @@ public class GUI extends JFrame implements ActionListener, WindowListener {
                 save();
             } else if(e.getSource() == saveAsMenuItem) {
                 saveAs();
-            } else if(e.getSource() == renderMenuItem) {
-                JOptionPane.showMessageDialog(this, "Rendering is not yet supported!", "Render", JOptionPane.ERROR_MESSAGE);
+            } else if(e.getSource() == exportMenuItem) {
+                JOptionPane.showMessageDialog(this, "Exporting is not yet supported!", "Export", JOptionPane.ERROR_MESSAGE);
             } else if(e.getSource() == quitMenuItem) {
                 dispatchEvent(new WindowEvent(this, WINDOW_CLOSING));
             }
